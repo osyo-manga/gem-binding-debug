@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Debug output. `name : value`}
   spec.description   = %q{Debug output. `name : value`}
-  spec.homepage      = "https://github.com/[USERNAME]/binding-debug"
+  spec.homepage      = "https://github.com/osyo-manga/gem-binding-debug"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
