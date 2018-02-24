@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["manga_osyo"]
   spec.email         = ["manga.osyo@gmail.com"]
 
-  spec.summary       = %q{Debug output}
-  spec.description   = %q{Debug output}
-  spec.homepage      = ""
+  spec.summary       = %q{Debug output. `name : value`}
+  spec.description   = %q{Debug output. `name : value`}
+  spec.homepage      = "https://github.com/[USERNAME]/binding-debug"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
