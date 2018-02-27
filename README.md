@@ -86,3 +86,16 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/osyo-manga/gem-binding-debug.
+
+
+## Release Note
+
+#### 0.2.0
+
+* Add `BindingDebug::Formats`
+
+#### 0.1.0
+
+* Release!!
+
+

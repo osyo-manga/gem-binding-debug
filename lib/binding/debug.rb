@@ -1,6 +1,21 @@
 require "binding/debug/version"
 
 module BindingDebug
+	module Formats
+		module_function
+		def default
+			proc { |name, value| "#{name} : #{value}" }
+		end
+
+		def prefix str
+			proc { |name, value| "#{str} #{BindingDebug::Formats.default.call name, value}" }
+		end
+
+		def suffix str
+			proc { |name, value| "#{BindingDebug::Formats.default.call name, value} #{str}" }
+		end
+	end
+
 	refine Binding do
 		def debug expr, &block
 			block ||= proc { |name, value| "#{name} : #{value}" }
