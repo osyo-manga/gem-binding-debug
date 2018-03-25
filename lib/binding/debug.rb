@@ -7,6 +7,10 @@ module BindingDebug
 			proc { |name, value| "#{name} : #{value}" }
 		end
 
+		def inspect formatter = default
+			proc { |name, value| formatter.call "#{name}.inspect", value.inspect }
+		end
+
 		def prefix str
 			proc { |name, value| "#{str} #{BindingDebug::Formats.default.call name, value}" }
 		end
@@ -18,15 +22,17 @@ module BindingDebug
 
 	refine Binding do
 		def debug expr, &block
-			block ||= proc { |name, value| "#{name} : #{value}" }
+			block ||= Formats.default
 			binding = self
 			expr.split("\n").reject { |it| /^\s*$/ =~ it }.map(&:strip).map { |expr|
-				block.call expr, binding.eval(expr)
+				block.call(expr, binding.eval(expr))
 			}.join("\n")
 		end
 
 		def p expr, &block
-			super debug expr, &block
+			block ||= Formats.default
+			puts(expr){ |name, value| block.call name, value.inspect }
+			expr
 		end
 
 		def puts expr, &block
