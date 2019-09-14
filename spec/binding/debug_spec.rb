@@ -1,37 +1,37 @@
 using BindingDebug
 
-RSpec.describe BindingDebug do
+RSpec.describe Binding do
   describe "#debug" do
-    subject { binding.debug expr_str }
+    subject { binding.debug expr }
 
     context "when capturing instance variables" do
       let!(:instance_value) { @instance_value = 42 }
-      let(:expr_str) { "@instance_value" }
+      let(:expr) { "@instance_value" }
       it { is_expected.to eq "@instance_value : #{instance_value}" }
     end
 
     context "when capturing local variables" do
-      let(:expr_str) { "local_value" }
+      let(:expr) { "local_value" }
       it do
         local_value = 42
-        expect(binding.debug expr_str).to eq "local_value : #{local_value}"
+        expect(binding.debug expr).to eq "local_value : #{local_value}"
       end
     end
 
     context "when capturing class variables" do
       let!(:class_value) { @@class_value = 42 }
-      let(:expr_str) { "@@class_value" }
+      let(:expr) { "@@class_value" }
       it { is_expected.to eq "@@class_value : #{class_value}" }
     end
 
     context "when capturing expr" do
-      let(:expr_str) { "42 + 42" }
+      let(:expr) { "42 + 42" }
       it { is_expected.to eq "42 + 42 : 84" }
     end
 
     context "when capturing method" do
       let(:meth) { 42 }
-      let(:expr_str) { "meth" }
+      let(:expr) { "meth" }
       it { is_expected.to eq "meth : #{meth}" }
     end
 
