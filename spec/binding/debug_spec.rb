@@ -1,6 +1,20 @@
 using BindingDebug
 
 RSpec.describe Binding do
+  class TestOutput
+    def to_s
+      "to_s"
+    end
+
+    def inspect
+      "inspect"
+    end
+
+    def pretty_inspect
+      "pretty_inspect"
+    end
+  end
+
   describe "#debug" do
     subject { binding.debug expr }
 
@@ -35,9 +49,72 @@ RSpec.describe Binding do
       it { is_expected.to eq "meth : #{meth}" }
     end
 
-    context "with block" do
+    context "when multiline expr" do
+      let(:value1) { 42 }
+      let(:value2) { 3.14 }
+      let(:value3) { "homu" }
+      let(:expr) {
+        %{
+          value1
+          value2
+          value3
+        }
+      }
+      it { is_expected.to eq "value1 : #{value1}\nvalue2 : #{value2}\nvalue3 : #{value3}" }
+    end
+
+    context "when with block" do
+      let(:mami) { "mami" }
       homu = "homu"
       it { expect(binding.debug(%{ mami + homu }){ |name, value| "#{name} - #{value}" }).to eq "mami + homu - mamihomu" }
     end
+  end
+
+  describe ".puts" do
+    let(:output) { StringIO.new }
+
+    subject do
+      proc do
+        tmp = $stdout
+        $stdout = output
+        binding.puts "TestOutput.new"
+      ensure
+        $stdout = tmp
+      end
+    end
+
+    it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+  end
+
+  describe ".p" do
+    let(:output) { StringIO.new }
+
+    subject do
+      proc do
+        tmp = $stdout
+        $stdout = output
+        binding.p "TestOutput.new"
+      ensure
+        $stdout = tmp
+      end
+    end
+
+    it { is_expected.to change { output.string }.to eq "TestOutput.new : inspect\n" }
+  end
+
+  describe ".pp" do
+    let(:output) { StringIO.new }
+
+    subject do
+      proc do
+        tmp = $stdout
+        $stdout = output
+        binding.pp "TestOutput.new"
+      ensure
+        $stdout = tmp
+      end
+    end
+
+    it { is_expected.to change { output.string }.to eq "TestOutput.new : pretty_inspect\n" }
   end
 end
