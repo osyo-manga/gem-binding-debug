@@ -1,8 +1,10 @@
 require "binding/debug/version"
+require "pp"
 
 module BindingDebug
   module Formats
     module_function
+
     def default
       proc { |name, value| "#{name} : #{value}" }
     end
@@ -32,6 +34,12 @@ module BindingDebug
     def p expr, &block
       block ||= Formats.default
       puts(expr){ |name, value| block.call name, value.inspect }
+      expr
+    end
+
+    def pp expr, &block
+      block ||= Formats.default
+      puts(expr){ |name, value| block.call name, value.pretty_inspect }
       expr
     end
 
