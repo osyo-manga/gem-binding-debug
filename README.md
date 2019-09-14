@@ -77,6 +77,36 @@ binding.puts %{
 # foo.class.name : String
 ```
 
+### `puts` with blocks
+
+```ruby
+require "binding/debug"
+
+using BindingDebug
+
+def plus a, b
+  a + b
+end
+
+foo = "homu"
+
+# puts with blocks
+puts {
+  foo.to_s.upcase
+  plus 1, 2
+  (0..20).to_a
+  foo.class.name
+}
+# output:
+# foo.to_s.upcase : HOMU
+# plus 1, 2 : 3
+# (0..20).to_a : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+# foo.class.name : String
+```
+
+Supported `Kernel.#p` , `Kernel.#pp`.
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
