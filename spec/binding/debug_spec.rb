@@ -136,19 +136,22 @@ RSpec.describe BindingDebug do
     end
 
     describe ".puts" do
-      let(:output) { StringIO.new }
+      context "when capturing StringIO.new" do
+        let(:output) { StringIO.new }
+        let(:block) { proc { TestOutput.new } }
 
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          puts { TestOutput.new }
-        ensure
-          $stdout = tmp
+        subject do
+          proc do
+            tmp = $stdout
+            $stdout = output
+            puts &block
+          ensure
+            $stdout = tmp
+          end
         end
-      end
 
-      it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+        it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+      end
     end
 
     describe ".p" do
