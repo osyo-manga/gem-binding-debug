@@ -84,7 +84,9 @@ module BindingDebug
 
           # MEMO: Add support `-> { hoge }`
           start_col += start_line[(start_col+1)..-1].yield_self { |line|
-            line =~ /^>\s*{/ ? line.index("{")+1 : 0
+              line =~ /^>\s*{/ ? line.index("{") + 1      # Support 2.5
+            : line =~ /^\s*{/  ? line.index("{") + 1      # Support 2.6 or later
+            : 0
           }
 
           if start_lnum == end_lnum
