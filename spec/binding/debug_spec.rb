@@ -1,3 +1,5 @@
+require_relative "../spec_helper"
+
 using BindingDebug
 
 RSpec.describe BindingDebug do
@@ -200,8 +202,8 @@ RSpec.describe BindingDebug do
     end
   end
 
-  describe BindingDebug::ProcWithBody do
-    using BindingDebug::ProcWithBody
+  describe ::BindingDebug::ProcWithBody do
+    using ::BindingDebug::ProcWithBody
 
     it { expect(proc{hoge}.body).to eq "hoge" }
     it { expect(proc{hoge }.body).to eq "hoge " }
