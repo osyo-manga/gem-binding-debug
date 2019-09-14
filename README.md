@@ -28,7 +28,7 @@ require "binding/debug"
 using BindingDebug
 
 def plus a, b
-	a + b
+  a + b
 end
 
 #######################################
@@ -65,10 +65,10 @@ binding.p "plus(1, 2)"
 
 foo = "homu"
 binding.puts %{
-	foo.to_s.upcase
-	plus 1, 2
-	(0..20).to_a
-	foo.class.name
+  foo.to_s.upcase
+  plus 1, 2
+  (0..20).to_a
+  foo.class.name
 }
 # output:
 # foo.to_s.upcase : HOMU
