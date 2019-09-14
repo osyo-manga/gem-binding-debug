@@ -186,4 +186,39 @@ RSpec.describe BindingDebug do
       it { is_expected.to change { output.string }.to eq "TestOutput.new : pretty_inspect\n" }
     end
   end
+
+  describe BindingDebug::ProcWithBody do
+    using BindingDebug::ProcWithBody
+
+    it { expect(proc{hoge}.body).to eq "hoge" }
+    it { expect(proc{hoge }.body).to eq "hoge " }
+    it { expect(proc{ hoge}.body).to eq " hoge" }
+    it { expect(proc{ hoge }.body).to eq " hoge " }
+    it { expect(proc   { hoge }.body).to eq " hoge " }
+    xit { expect(proc{ あああ }.body).to eq " あああ " }
+    it do
+       expect(proc { hoge
+                     foo
+       }.body).to eq " hoge\n                     foo\n       "
+    end
+    it do
+       expect(proc { hoge
+       }.body).to eq " hoge\n       "
+    end
+    it do
+       expect(proc { hoge
+                     foo }.body).to eq " hoge\n                     foo "
+    end
+    it do
+       expect(proc { hoge
+                     foo
+                     bar }.body).to eq " hoge\n                     foo\n                     bar "
+    end
+
+    it { expect(lambda{hoge}.body).to eq "hoge" }
+    it { expect(lambda{hoge }.body).to eq "hoge " }
+    it { expect(lambda{ hoge}.body).to eq " hoge" }
+    it { expect(lambda{ hoge }.body).to eq " hoge " }
+    it { expect(lambda   { hoge }.body).to eq " hoge " }
+  end
 end
