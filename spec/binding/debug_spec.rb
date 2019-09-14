@@ -120,7 +120,7 @@ RSpec.describe BindingDebug do
     end
   end
 
-  RSpec.describe Kernel do
+  describe Kernel do
     class TestOutput
       def to_s
         "to_s"
