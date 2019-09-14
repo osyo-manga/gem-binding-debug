@@ -78,14 +78,14 @@ module BindingDebug
 
         raise "Unsupported file" if path.nil? || path == "(irb)"
 
-        File.readlines(path).then { |lines|
+        File.readlines(path).yield_self { |lines|
           start_line, end_line = lines[start_lnum-1], lines[end_lnum-1]
           if start_lnum == end_lnum
             start_line[(start_col+1)...(end_col-1)]
           elsif end_lnum - start_lnum == 1
-            start_line[(start_col+1)...-1] + end_line[0...(end_col-1)]
+            start_line[(start_col+1)..-1] + end_line[0...(end_col-1)]
           else
-            start_line[(start_col+1)...-1] +
+            start_line[(start_col+1)..-1] +
             lines[(start_lnum)...(end_lnum-1)].join +
             end_line[0...(end_col-1)]
           end
@@ -94,7 +94,7 @@ module BindingDebug
 
       def code_location
         RubyVM::InstructionSequence.of(self).to_h
-          .then { |iseq| [iseq[:absolute_path], iseq.dig(:misc, :code_location)] }
+          .yield_self { |iseq| [iseq[:absolute_path], iseq.dig(:misc, :code_range) || iseq.dig(:misc, :code_location)] }
       end
     end
   end
