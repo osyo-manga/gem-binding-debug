@@ -209,6 +209,7 @@ RSpec.describe BindingDebug do
     it { expect(proc{ hoge }.body).to eq " hoge " }
     it { expect(proc{ -> { hoge } }.body).to eq " -> { hoge } " }
     it { expect(proc   { hoge }.body).to eq " hoge " }
+    it { expect(proc { 		hoge }.body).to eq " 		hoge " }
     xit { expect(proc{ あああ }.body).to eq " あああ " }
     it do
        expect(proc { hoge
@@ -235,6 +236,7 @@ RSpec.describe BindingDebug do
     it { expect(lambda{ hoge }.body).to eq " hoge " }
     it { expect(lambda{ -> { hoge } }.body).to eq " -> { hoge } " }
     it { expect(lambda   { hoge }.body).to eq " hoge " }
+    it { expect(lambda { 		hoge }.body).to eq " 		hoge " }
 
     it { expect(->{hoge}.body).to eq "hoge" }
     it { expect(->{hoge }.body).to eq "hoge " }
@@ -242,5 +244,6 @@ RSpec.describe BindingDebug do
     it { expect(->{ hoge }.body).to eq " hoge " }
     it { expect(->{ -> { hoge } }.body).to eq " -> { hoge } " }
     it { expect(->   { hoge }.body).to eq " hoge " }
+    it { expect(-> { 		hoge }.body).to eq " 		hoge " }
   end
 end
