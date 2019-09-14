@@ -136,21 +136,34 @@ RSpec.describe BindingDebug do
     end
 
     describe ".puts" do
-      context "when capturing StringIO.new" do
-        let(:output) { StringIO.new }
-        let(:block) { proc { TestOutput.new } }
-
-        subject do
-          proc do
-            tmp = $stdout
-            $stdout = output
-            puts &block
-          ensure
-            $stdout = tmp
-          end
+      let(:output) { StringIO.new }
+      subject do
+        proc do
+          tmp = $stdout
+          $stdout = output
+          puts &block
+        ensure
+          $stdout = tmp
         end
+      end
+
+      context "when capturing StringIO.new" do
+        let(:block) { -> { TestOutput.new } }
 
         it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+      end
+
+      context "when capturing multiline" do
+        let(:value) { 42 }
+        let(:block) {
+          value = 42
+          -> {
+            value
+            value + value
+          }
+        }
+
+        it { is_expected.to change { output.string }.to eq "value : 42\nvalue + value : 84\n" }
       end
     end
 
@@ -194,6 +207,7 @@ RSpec.describe BindingDebug do
     it { expect(proc{hoge }.body).to eq "hoge " }
     it { expect(proc{ hoge}.body).to eq " hoge" }
     it { expect(proc{ hoge }.body).to eq " hoge " }
+    it { expect(proc{ -> { hoge } }.body).to eq " -> { hoge } " }
     it { expect(proc   { hoge }.body).to eq " hoge " }
     xit { expect(proc{ あああ }.body).to eq " あああ " }
     it do
@@ -219,6 +233,14 @@ RSpec.describe BindingDebug do
     it { expect(lambda{hoge }.body).to eq "hoge " }
     it { expect(lambda{ hoge}.body).to eq " hoge" }
     it { expect(lambda{ hoge }.body).to eq " hoge " }
+    it { expect(lambda{ -> { hoge } }.body).to eq " -> { hoge } " }
     it { expect(lambda   { hoge }.body).to eq " hoge " }
+
+    it { expect(->{hoge}.body).to eq "hoge" }
+    it { expect(->{hoge }.body).to eq "hoge " }
+    it { expect(->{ hoge}.body).to eq " hoge" }
+    it { expect(->{ hoge }.body).to eq " hoge " }
+    it { expect(->{ -> { hoge } }.body).to eq " -> { hoge } " }
+    it { expect(->   { hoge }.body).to eq " hoge " }
   end
 end

@@ -76,10 +76,17 @@ module BindingDebug
       def body
         path, (start_lnum, start_col, end_lnum, end_col) = code_location
 
+
         raise "Unsupported file" if path.nil? || path == "(irb)"
 
         File.readlines(path).yield_self { |lines|
           start_line, end_line = lines[start_lnum-1], lines[end_lnum-1]
+
+          # MEMO: Add support `-> { hoge }`
+          start_col += start_line[(start_col+1)..-1].yield_self { |line|
+            line =~ /^>\s*{/ ? line.index("{")+1 : 0
+          }
+
           if start_lnum == end_lnum
             start_line[(start_col+1)...(end_col-1)]
           elsif end_lnum - start_lnum == 1
