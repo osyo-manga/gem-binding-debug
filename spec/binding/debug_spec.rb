@@ -118,3 +118,67 @@ RSpec.describe Binding do
     it { is_expected.to change { output.string }.to eq "TestOutput.new : pretty_inspect\n" }
   end
 end
+
+RSpec.describe Kernel do
+  class TestOutput
+    def to_s
+      "to_s"
+    end
+
+    def inspect
+      "inspect"
+    end
+
+    def pretty_inspect
+      "pretty_inspect"
+    end
+  end
+
+  describe ".puts" do
+    let(:output) { StringIO.new }
+
+    subject do
+      proc do
+        tmp = $stdout
+        $stdout = output
+        puts { TestOutput.new }
+      ensure
+        $stdout = tmp
+      end
+    end
+
+    it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+  end
+
+  describe ".p" do
+    let(:output) { StringIO.new }
+
+    subject do
+      proc do
+        tmp = $stdout
+        $stdout = output
+        p { TestOutput.new }
+      ensure
+        $stdout = tmp
+      end
+    end
+
+    it { is_expected.to change { output.string }.to eq "TestOutput.new : inspect\n" }
+  end
+
+  describe ".pp" do
+    let(:output) { StringIO.new }
+
+    subject do
+      proc do
+        tmp = $stdout
+        $stdout = output
+        pp { TestOutput.new }
+      ensure
+        $stdout = tmp
+      end
+    end
+
+    it { is_expected.to change { output.string }.to eq "TestOutput.new : pretty_inspect\n" }
+  end
+end

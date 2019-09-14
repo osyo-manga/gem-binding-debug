@@ -1,4 +1,5 @@
 require "binding/debug/version"
+require "binding_of_caller"
 require "pp"
 
 module BindingDebug
@@ -44,7 +45,77 @@ module BindingDebug
     end
 
     def puts expr, &block
-      super debug expr, &block
+      Kernel.puts debug expr, &block
+    end
+  end
+
+  module ProcWithBody
+    refine RubyVM::InstructionSequence do
+      def to_h
+        %i(
+          magic
+          major_version
+          minor_version
+          format_type
+          misc
+          label
+          path
+          absolute_path
+          first_lineno
+          type
+          locals
+          args
+          catch_table
+          bytecode
+        ).zip(to_a).to_h
+      end
+    end
+    using self
+
+    refine Proc do
+      def body
+        path, (start_lnum, start_col, end_lnum, end_col) = code_location
+
+        raise "Unsupported file" if path.nil? || path == "(irb)"
+
+        File.readlines(path).then { |lines|
+          start_line, end_line = lines[start_lnum-1], lines[end_lnum-1]
+          if start_lnum == end_lnum
+            start_line[(start_col+1)...(end_col-1)]
+          elsif end_lnum - start_lnum == 1
+            start_line[(start_col+1)...-1] + end_line[0...(end_col-1)]
+          else
+            start_line[(start_col+1)...-1] +
+            lines[(start_lnum)...(end_lnum-1)].join +
+            end_line[0...(end_col-1)]
+          end
+        }
+      end
+
+      def code_location
+        RubyVM::InstructionSequence.of(self).to_h
+          .then { |iseq| [iseq[:absolute_path], iseq.dig(:misc, :code_location)] }
+      end
+    end
+  end
+
+  refine Kernel do
+    using ProcWithBody
+    using BindingDebug
+
+    def puts(*args, &block)
+      return super(*args) if block.nil?
+      binding.of_caller(1).puts block.body
+    end
+
+    def p(*args, &block)
+      return super(*args) if block.nil?
+      binding.of_caller(1).p block.body
+    end
+
+    def pp(*args, &block)
+      return super(*args) if block.nil?
+      binding.of_caller(1).pp block.body
     end
   end
 end
