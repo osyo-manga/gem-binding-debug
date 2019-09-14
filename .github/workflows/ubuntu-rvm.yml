@@ -32,4 +32,4 @@ jobs:
     - name: Run test
       run: |
         source $HOME/.rvm/scripts/rvm
-        rake spec
+        bundle exec rake spec

@@ -28,4 +28,4 @@ jobs:
         bundle install
     - name: Run test
       run: |
-        rake spec
+        bundle exec rake spec
