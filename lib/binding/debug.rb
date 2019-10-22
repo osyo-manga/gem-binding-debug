@@ -76,7 +76,6 @@ module BindingDebug
       def body
         path, (start_lnum, start_col, end_lnum, end_col) = code_location
 
-
         raise "Unsupported file" if path.nil? || path == "(irb)"
 
         File.readlines(path).yield_self { |lines|
@@ -90,14 +89,18 @@ module BindingDebug
           }
 
           if start_lnum == end_lnum
-            start_line[(start_col+1)...(end_col-1)]
+            start_line[(start_col)...(end_col)]
           elsif end_lnum - start_lnum == 1
-            start_line[(start_col+1)..-1] + end_line[0...(end_col-1)]
+            start_line[(start_col)..-1] + end_line[0...(end_col)]
           else
-            start_line[(start_col+1)..-1] +
+            start_line[(start_col)..-1] +
             lines[(start_lnum)...(end_lnum-1)].join +
-            end_line[0...(end_col-1)]
-          end
+            end_line[0...(end_col)]
+          end.tap { |src|
+            break $1 if src =~ /(?:^do(.+)end$)/m
+            break $1 if src =~ /(?:^\s*{(.+)}$)/m
+            break ""
+          }
         }
       end
 
