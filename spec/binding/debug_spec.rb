@@ -74,51 +74,21 @@ RSpec.describe BindingDebug do
     end
 
     describe ".puts" do
-      let(:output) { StringIO.new }
-
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          binding.puts "TestOutput.new"
-        ensure
-          $stdout = tmp
-        end
-      end
-
-      it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+      let(:args) { "TestOutput.new" }
+      subject { -> { binding.puts args } }
+      it { is_expected.to output("TestOutput.new : to_s\n").to_stdout }
     end
 
     describe ".p" do
-      let(:output) { StringIO.new }
-
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          binding.p "TestOutput.new"
-        ensure
-          $stdout = tmp
-        end
-      end
-
-      it { is_expected.to change { output.string }.to eq "TestOutput.new : inspect\n" }
+      let(:args) { "TestOutput.new" }
+      subject { -> { binding.p args } }
+      it { is_expected.to output("TestOutput.new : inspect\n").to_stdout }
     end
 
     describe ".pp" do
-      let(:output) { StringIO.new }
-
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          binding.pp "TestOutput.new"
-        ensure
-          $stdout = tmp
-        end
-      end
-
-      it { is_expected.to change { output.string }.to eq "TestOutput.new : pretty_inspect\n" }
+      let(:args) { "TestOutput.new" }
+      subject { -> { binding.pp args } }
+      it { is_expected.to output("TestOutput.new : pretty_inspect\n").to_stdout }
     end
   end
 
@@ -138,21 +108,11 @@ RSpec.describe BindingDebug do
     end
 
     describe ".puts" do
-      let(:output) { StringIO.new }
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          puts &block
-        ensure
-          $stdout = tmp
-        end
-      end
+      subject { -> { puts &block } }
 
       context "when capturing StringIO.new" do
         let(:block) { -> { TestOutput.new } }
-
-        it { is_expected.to change { output.string }.to eq "TestOutput.new : to_s\n" }
+        it { is_expected.to output("TestOutput.new : to_s\n").to_stdout }
       end
 
       context "when capturing multiline" do
@@ -165,40 +125,20 @@ RSpec.describe BindingDebug do
           }
         }
 
-        it { is_expected.to change { output.string }.to eq "value : 42\nvalue + value : 84\n" }
+        it { is_expected.to output("value : 42\nvalue + value : 84\n").to_stdout }
       end
     end
 
     describe ".p" do
-      let(:output) { StringIO.new }
-
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          p { TestOutput.new }
-        ensure
-          $stdout = tmp
-        end
-      end
-
-      it { is_expected.to change { output.string }.to eq "TestOutput.new : inspect\n" }
+      let(:block) { -> { TestOutput.new } }
+      subject { -> { p &block } }
+      it { is_expected.to output("TestOutput.new : inspect\n").to_stdout }
     end
 
     describe ".pp" do
-      let(:output) { StringIO.new }
-
-      subject do
-        proc do
-          tmp = $stdout
-          $stdout = output
-          pp { TestOutput.new }
-        ensure
-          $stdout = tmp
-        end
-      end
-
-      it { is_expected.to change { output.string }.to eq "TestOutput.new : pretty_inspect\n" }
+      let(:block) { -> { TestOutput.new } }
+      subject { -> { pp &block } }
+      it { is_expected.to output("TestOutput.new : pretty_inspect\n").to_stdout }
     end
   end
 
