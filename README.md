@@ -37,14 +37,14 @@ end
 
 hoge = 42
 p binding.debug "hoge"
-# => "hoge : 42"
+# => "hoge # => 42"
 p binding.debug %{ hoge }
 
 binding.p "hoge"
-# => "hoge : 42"
+# => "hoge # => 42"
 
 binding.puts "hoge"
-# output: "hoge : 42"
+# output: "hoge # => 42"
 
 # with format
 p binding.debug("hoge"){ |name, value| "#{name} - #{value}" }
@@ -56,7 +56,7 @@ p binding.debug("hoge"){ |name, value| "#{name} - #{value}" }
 #######################################
 
 binding.p "plus(1, 2)"
-# => "plus 1, 2 : 3"
+# => "plus 1, 2 # => 3"
 
 
 #######################################
@@ -71,10 +71,10 @@ binding.puts %{
   foo.class.name
 }
 # output:
-# foo.to_s.upcase : HOMU
-# plus 1, 2 : 3
-# (0..20).to_a : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-# foo.class.name : String
+# foo.to_s.upcase # => HOMU
+# plus 1, 2 # => 3
+# (0..20).to_a # => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+# foo.class.name # => String
 ```
 
 ### `puts` with blocks
@@ -98,10 +98,10 @@ puts {
   foo.class.name
 }
 # output:
-# foo.to_s.upcase : HOMU
-# plus 1, 2 : 3
-# (0..20).to_a : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-# foo.class.name : String
+# foo.to_s.upcase # => HOMU
+# plus 1, 2 # => 3
+# (0..20).to_a # => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+# foo.class.name # => String
 ```
 
 Supported `Kernel.#p` , `Kernel.#pp`.
@@ -125,7 +125,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/osyo-m
 * Add `BindingDebug::Formats`
 * Add `Binding#pp`
 * Add with block in `Kernle.#puts` `Kernle.#p` `Kernle.#pp` 
-  * e.g `puts { value } # => "value : #{value}"`
+  * e.g `puts { value } # => "value # => #{value}"`
+* Change default format `expr : result` to `expr # => result`
 
 #### 0.1.0
 

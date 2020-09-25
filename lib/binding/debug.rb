@@ -7,7 +7,7 @@ module BindingDebug
     module_function
 
     def default
-      proc { |name, value| "#{name} : #{value}" }
+      proc { |name, value| "#{name} # => #{value}" }
     end
 
     def inspect formatter = default

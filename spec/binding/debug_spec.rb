@@ -24,32 +24,32 @@ RSpec.describe BindingDebug do
       context "when capturing instance variables" do
         let!(:instance_value) { @instance_value = 42 }
         let(:expr) { "@instance_value" }
-        it { is_expected.to eq "@instance_value : #{instance_value}" }
+        it { is_expected.to eq "@instance_value # => #{instance_value}" }
       end
 
       context "when capturing local variables" do
         let(:expr) { "local_value" }
         it do
           local_value = 42
-          expect(binding.debug expr).to eq "local_value : #{local_value}"
+          expect(binding.debug expr).to eq "local_value # => #{local_value}"
         end
       end
 
       context "when capturing class variables" do
         let!(:class_value) { @@class_value = 42 }
         let(:expr) { "@@class_value" }
-        it { is_expected.to eq "@@class_value : #{class_value}" }
+        it { is_expected.to eq "@@class_value # => #{class_value}" }
       end
 
       context "when capturing expr" do
         let(:expr) { "42 + 42" }
-        it { is_expected.to eq "42 + 42 : 84" }
+        it { is_expected.to eq "42 + 42 # => 84" }
       end
 
       context "when capturing method" do
         let(:meth) { 42 }
         let(:expr) { "meth" }
-        it { is_expected.to eq "meth : #{meth}" }
+        it { is_expected.to eq "meth # => #{meth}" }
       end
 
       context "when multiline expr" do
@@ -63,7 +63,7 @@ RSpec.describe BindingDebug do
             value3
           }
         }
-        it { is_expected.to eq "value1 : #{value1}\nvalue2 : #{value2}\nvalue3 : #{value3}" }
+        it { is_expected.to eq "value1 # => #{value1}\nvalue2 # => #{value2}\nvalue3 # => #{value3}" }
       end
 
       context "when with block" do
@@ -76,19 +76,19 @@ RSpec.describe BindingDebug do
     describe ".puts" do
       let(:args) { "TestOutput.new" }
       subject { -> { binding.puts args } }
-      it { is_expected.to output("TestOutput.new : to_s\n").to_stdout }
+      it { is_expected.to output("TestOutput.new # => to_s\n").to_stdout }
     end
 
     describe ".p" do
       let(:args) { "TestOutput.new" }
       subject { -> { binding.p args } }
-      it { is_expected.to output("TestOutput.new : inspect\n").to_stdout }
+      it { is_expected.to output("TestOutput.new # => inspect\n").to_stdout }
     end
 
     describe ".pp" do
       let(:args) { "TestOutput.new" }
       subject { -> { binding.pp args } }
-      it { is_expected.to output("TestOutput.new : pretty_inspect\n").to_stdout }
+      it { is_expected.to output("TestOutput.new # => pretty_inspect\n").to_stdout }
 
       context "multiline" do
         let(:args) { <<~EOS }
@@ -101,12 +101,12 @@ RSpec.describe BindingDebug do
         EOS
         subject { -> { binding.pp args } }
         it { is_expected.to output(<<~EOS).to_stdout }
-          1 : 1
-          TestOutput.new : pretty_inspect
-          2 + 3 : 5
-          TestOutput.new : pretty_inspect
-          3 + 4 + 5 : 12
-          TestOutput.new : pretty_inspect
+          1 # => 1
+          TestOutput.new # => pretty_inspect
+          2 + 3 # => 5
+          TestOutput.new # => pretty_inspect
+          3 + 4 + 5 # => 12
+          TestOutput.new # => pretty_inspect
         EOS
       end
     end
@@ -132,7 +132,7 @@ RSpec.describe BindingDebug do
 
       context "when capturing StringIO.new" do
         let(:block) { -> { TestOutput.new } }
-        it { is_expected.to output("TestOutput.new : to_s\n").to_stdout }
+        it { is_expected.to output("TestOutput.new # => to_s\n").to_stdout }
       end
 
       context "when capturing multiline" do
@@ -145,20 +145,20 @@ RSpec.describe BindingDebug do
           }
         }
 
-        it { is_expected.to output("value : 42\nvalue + value : 84\n").to_stdout }
+        it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
       end
     end
 
     describe ".p" do
       let(:block) { -> { TestOutput.new } }
       subject { -> { p &block } }
-      it { is_expected.to output("TestOutput.new : inspect\n").to_stdout }
+      it { is_expected.to output("TestOutput.new # => inspect\n").to_stdout }
     end
 
     describe ".pp" do
       let(:block) { -> { TestOutput.new } }
       subject { -> { pp &block } }
-      it { is_expected.to output("TestOutput.new : pretty_inspect\n").to_stdout }
+      it { is_expected.to output("TestOutput.new # => pretty_inspect\n").to_stdout }
     end
   end
 
