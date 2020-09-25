@@ -89,6 +89,26 @@ RSpec.describe BindingDebug do
       let(:args) { "TestOutput.new" }
       subject { -> { binding.pp args } }
       it { is_expected.to output("TestOutput.new : pretty_inspect\n").to_stdout }
+
+      context "multiline" do
+        let(:args) { <<~EOS }
+          1
+          TestOutput.new
+          2 + 3
+          TestOutput.new
+          3 + 4 + 5
+          TestOutput.new
+        EOS
+        subject { -> { binding.pp args } }
+        it { is_expected.to output(<<~EOS).to_stdout }
+          1 : 1
+          TestOutput.new : pretty_inspect
+          2 + 3 : 5
+          TestOutput.new : pretty_inspect
+          3 + 4 + 5 : 12
+          TestOutput.new : pretty_inspect
+        EOS
+      end
     end
   end
 

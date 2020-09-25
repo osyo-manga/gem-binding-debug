@@ -40,7 +40,8 @@ module BindingDebug
 
     def pp expr, &block
       block ||= Formats.default
-      puts(expr){ |name, value| block.call name, value.pretty_inspect }
+      # MEMO: Remove \n in eol.
+      puts(expr){ |name, value| block.call name, value.pretty_inspect.rstrip }
       expr
     end
 
