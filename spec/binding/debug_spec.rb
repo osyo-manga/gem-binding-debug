@@ -147,18 +147,94 @@ RSpec.describe BindingDebug do
 
         it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
       end
+
+      context "when capturing method" do
+        let(:value) { 42 }
+        let(:block) { -> { value } }
+        it { is_expected.to output("value # => 42\n").to_stdout }
+      end
+
+      context "when capturing local variable" do
+        let(:block) {
+          value = 42
+          -> { value }
+        }
+        it { is_expected.to output("value # => 42\n").to_stdout }
+      end
     end
 
     describe ".p" do
       let(:block) { -> { TestOutput.new } }
       subject { -> { p &block } }
-      it { is_expected.to output("TestOutput.new # => inspect\n").to_stdout }
+
+      context "when capturing TestOutput.new" do
+        let(:block) { -> { TestOutput.new } }
+        it { is_expected.to output("TestOutput.new # => inspect\n").to_stdout }
+      end
+
+      context "when capturing multiline" do
+        let(:value) { 42 }
+        let(:block) {
+          value = 42
+          -> {
+            value
+            value + value
+          }
+        }
+
+        it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
+      end
+
+      context "when capturing method" do
+        let(:value) { 42 }
+        let(:block) { -> { value } }
+        it { is_expected.to output("value # => 42\n").to_stdout }
+      end
+
+      context "when capturing local variable" do
+        let(:block) {
+          value = 42
+          -> { value }
+        }
+        it { is_expected.to output("value # => 42\n").to_stdout }
+      end
     end
 
     describe ".pp" do
       let(:block) { -> { TestOutput.new } }
       subject { -> { pp &block } }
-      it { is_expected.to output("TestOutput.new # => pretty_inspect\n").to_stdout }
+
+      context "when capturing TestOutput.new" do
+        let(:block) { -> { TestOutput.new } }
+        it { is_expected.to output("TestOutput.new # => pretty_inspect\n").to_stdout }
+      end
+
+      context "when capturing multiline" do
+        let(:value) { 42 }
+        let(:block) {
+          value = 42
+          -> {
+            value
+            value + value
+          }
+        }
+
+        it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
+      end
+
+      context "when capturing method" do
+        let(:value) { 42 }
+        let(:block) { -> { value } }
+        it { is_expected.to output("value # => 42\n").to_stdout }
+      end
+
+      context "when capturing local variable" do
+        let(:block) {
+          value = 42
+          -> { value }
+        }
+        it { is_expected.to output("value # => 42\n").to_stdout }
+      end
     end
   end
 

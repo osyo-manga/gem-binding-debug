@@ -1,5 +1,4 @@
 require "binding/debug/version"
-require "binding_of_caller"
 require "pp"
 
 module BindingDebug
@@ -118,17 +117,17 @@ module BindingDebug
 
     def puts(*args, &block)
       return super(*args) if block.nil?
-      binding.of_caller(1).puts block.body
+      block.binding.puts block.body
     end
 
     def p(*args, &block)
       return super(*args) if block.nil?
-      binding.of_caller(1).p block.body
+      block.binding.p block.body
     end
 
     def pp(*args, &block)
       return super(*args) if block.nil?
-      binding.of_caller(1).pp block.body
+      block.binding.pp block.body
     end
   end
 end
