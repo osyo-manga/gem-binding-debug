@@ -130,7 +130,7 @@ RSpec.describe BindingDebug do
     describe ".puts" do
       subject { -> { puts &block } }
 
-      context "when capturing StringIO.new" do
+      context "when capturing TestOutput.new" do
         let(:block) { -> { TestOutput.new } }
         it { is_expected.to output("TestOutput.new # => to_s\n").to_stdout }
       end
