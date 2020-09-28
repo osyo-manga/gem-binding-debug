@@ -36,9 +36,15 @@ RSpec.describe BindingDebug do
       end
 
       context "when capturing class variables" do
-        let!(:class_value) { @@class_value = 42 }
-        let(:expr) { "@@class_value" }
-        it { is_expected.to eq "@@class_value # => #{class_value}" }
+        class TestClassInstanceValue
+          @@class_value = 42
+          def test
+            binding.debug "@@class_value"
+          end
+        end
+        it do
+          expect(TestClassInstanceValue.new.test).to eq "@@class_value # => 42"
+        end
       end
 
       context "when capturing expr" do
