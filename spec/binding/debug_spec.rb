@@ -80,40 +80,52 @@ RSpec.describe BindingDebug do
     end
 
     describe ".puts" do
-      let(:args) { "TestOutput.new" }
-      subject { -> { binding.puts args } }
-      it { is_expected.to output("TestOutput.new # => to_s\n").to_stdout }
+      let(:args) { <<~EOS }
+        TestOutput.new
+        1 + 2
+      EOS
+      subject { -> { @result = binding.puts args } }
+      it { is_expected.to output("TestOutput.new # => to_s\n1 + 2 # => 3\n").to_stdout }
+      it { is_expected.not_to change { @result } }
     end
 
     describe ".p" do
-      let(:args) { "TestOutput.new" }
-      subject { -> { binding.p args } }
-      it { is_expected.to output("TestOutput.new # => inspect\n").to_stdout }
+      let(:args) { <<~EOS }
+        TestOutput.new
+        1 + 2
+      EOS
+      subject { -> { @result = binding.p args } }
+      it { is_expected.to output("TestOutput.new # => inspect\n1 + 2 # => 3\n").to_stdout }
+      it { is_expected.to change { @result }.to 3 }
     end
 
     describe ".pp" do
-      let(:args) { "TestOutput.new" }
-      subject { -> { binding.pp args } }
-      it { is_expected.to output("TestOutput.new # => pretty_inspect\n").to_stdout }
+      let(:args) { <<~EOS }
+        TestOutput.new
+        1 + 2
+      EOS
+      subject { -> { @result = binding.pp args } }
+      it { is_expected.to output("TestOutput.new # => pretty_inspect\n1 + 2 # => 3\n").to_stdout }
+      it { is_expected.to change { @result }.to 3 }
 
       context "multiline" do
         let(:args) { <<~EOS }
+          TestOutput.new
           1
           TestOutput.new
           2 + 3
           TestOutput.new
           3 + 4 + 5
-          TestOutput.new
         EOS
-        subject { -> { binding.pp args } }
         it { is_expected.to output(<<~EOS).to_stdout }
+          TestOutput.new # => pretty_inspect
           1 # => 1
           TestOutput.new # => pretty_inspect
           2 + 3 # => 5
           TestOutput.new # => pretty_inspect
           3 + 4 + 5 # => 12
-          TestOutput.new # => pretty_inspect
         EOS
+        it { is_expected.to change { @result }.to 12 }
       end
     end
   end
@@ -134,11 +146,15 @@ RSpec.describe BindingDebug do
     end
 
     describe ".puts" do
-      subject { -> { puts &block } }
+      subject { -> { @result = puts &block } }
 
       context "when capturing TestOutput.new" do
-        let(:block) { -> { TestOutput.new } }
-        it { is_expected.to output("TestOutput.new # => to_s\n").to_stdout }
+        let(:block) { -> {
+          TestOutput.new
+          1 + 2
+        } }
+        it { is_expected.to output("TestOutput.new # => to_s\n1 + 2 # => 3\n").to_stdout }
+        it { is_expected.not_to change { @result } }
       end
 
       context "when capturing multiline" do
@@ -152,12 +168,14 @@ RSpec.describe BindingDebug do
         }
 
         it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
+        it { is_expected.not_to change { @result } }
       end
 
       context "when capturing method" do
         let(:value) { 42 }
         let(:block) { -> { value } }
         it { is_expected.to output("value # => 42\n").to_stdout }
+        it { is_expected.not_to change { @result } }
       end
 
       context "when capturing local variable" do
@@ -166,12 +184,16 @@ RSpec.describe BindingDebug do
           -> { value }
         }
         it { is_expected.to output("value # => 42\n").to_stdout }
+        it { is_expected.not_to change { @result } }
       end
     end
 
     describe ".p" do
-      let(:block) { -> { TestOutput.new } }
-      subject { -> { p &block } }
+      let(:block) { -> {
+        TestOutput.new
+        1 + 2
+      } }
+      subject { -> { @result = p &block } }
 
       context "when capturing TestOutput.new" do
         let(:block) { -> { TestOutput.new } }
@@ -189,12 +211,14 @@ RSpec.describe BindingDebug do
         }
 
         it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
+        it { is_expected.to change { @result }.to 84 }
       end
 
       context "when capturing method" do
         let(:value) { 42 }
         let(:block) { -> { value } }
         it { is_expected.to output("value # => 42\n").to_stdout }
+        it { is_expected.to change { @result }.to 42 }
       end
 
       context "when capturing local variable" do
@@ -203,12 +227,13 @@ RSpec.describe BindingDebug do
           -> { value }
         }
         it { is_expected.to output("value # => 42\n").to_stdout }
+        it { is_expected.to change { @result }.to 42 }
       end
     end
 
     describe ".pp" do
       let(:block) { -> { TestOutput.new } }
-      subject { -> { pp &block } }
+      subject { -> { @result = pp &block } }
 
       context "when capturing TestOutput.new" do
         let(:block) { -> { TestOutput.new } }
@@ -226,12 +251,14 @@ RSpec.describe BindingDebug do
         }
 
         it { is_expected.to output("value # => 42\nvalue + value # => 84\n").to_stdout }
+        it { is_expected.to change { @result }.to 84 }
       end
 
       context "when capturing method" do
         let(:value) { 42 }
         let(:block) { -> { value } }
         it { is_expected.to output("value # => 42\n").to_stdout }
+        it { is_expected.to change { @result }.to 42 }
       end
 
       context "when capturing local variable" do
@@ -240,6 +267,7 @@ RSpec.describe BindingDebug do
           -> { value }
         }
         it { is_expected.to output("value # => 42\n").to_stdout }
+        it { is_expected.to change { @result }.to 42 }
       end
     end
   end

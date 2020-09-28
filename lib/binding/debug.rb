@@ -33,15 +33,22 @@ module BindingDebug
 
     def p expr, &block
       block ||= Formats.default
-      puts(expr){ |name, value| block.call name, value.inspect }
-      expr
+      result = nil
+      puts(expr){ |name, value|
+        result = value; block.call name, value.inspect
+      }
+      result
     end
 
     def pp expr, &block
       block ||= Formats.default
-      # MEMO: Remove \n in eol.
-      puts(expr){ |name, value| block.call name, value.pretty_inspect.rstrip }
-      expr
+      result = nil
+      puts(expr){ |name, value|
+        result = value
+        # MEMO: Remove \n in eol.
+        block.call name, value.pretty_inspect.rstrip
+      }
+      result
     end
 
     def puts expr, &block

@@ -122,6 +122,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/osyo-m
 
 #### 0.2.0
 
+* Fix return values
 * Add `BindingDebug::Formats`
 * Add `Binding#pp`
 * Add with block in `Kernle.#puts` `Kernle.#p` `Kernle.#pp` 
