@@ -120,14 +120,17 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/osyo-m
 
 ## Release Note
 
-#### 0.2.0
+#### 0.3.0
 
 * Fix return values
+* Change default format `expr : result` to `expr # => result`
+
+#### 0.2.0
+
 * Add `BindingDebug::Formats`
 * Add `Binding#pp`
 * Add with block in `Kernle.#puts` `Kernle.#p` `Kernle.#pp` 
   * e.g `puts { value } # => "value # => #{value}"`
-* Change default format `expr : result` to `expr # => result`
 
 #### 0.1.0
 
